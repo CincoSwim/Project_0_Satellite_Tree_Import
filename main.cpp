@@ -10,7 +10,7 @@ void Insert(BinNode *&rt, Satellite sat){
     //doesn't check condition properly, recheck
     if (rt == NULL){
         rt = new BinNode(sat);
-        rt->getItem().setSatName(sat.getSatName());
+        //rt->getItem().setSatName(sat.getSatName());
 
     }
     else if (sat.getSatName() < rt->getItem().getSatName() ){
@@ -21,6 +21,20 @@ void Insert(BinNode *&rt, Satellite sat){
     }
 
 };
+
+void Deorbit(BinNode *root, string delSearch){
+
+}
+
+void deleteTree(BinNode *root){
+    if (root == NULL){
+        return;
+    }
+    deleteTree(root->left);
+    deleteTree(root->right);
+    cout<< "deleting node" <<endl;
+    free(root);
+}
 
 BinNode* readFiles(string filename){
     Satellite fileRead;
@@ -82,41 +96,72 @@ BinNode* readFiles(string filename){
 
 }
 
+void saveFiles(BinNode *root, string filename){
+    ofstream write;
+    write.open(filename, ios::out | ios::app);
+    if (root != NULL){
+        saveFiles(root->left, filename);
+        write << root->getItem().SatName << endl;
+        write << root->getItem().Country << endl;
+        write << root->getItem().OpName << endl;
+        write << root->getItem().SatType << endl;
+        write << root->getItem().Task << endl;
+        write << root->getItem().LongTask << endl;
+        write << root->getItem().OrbitType << endl;
+        write << root->getItem().apogee << endl;
+        write << root->getItem().perigee << endl;
+        write << root->getItem().period << endl;
+        write << root->getItem().LnchDate << endl;
+        write << root->getItem().ExpLife << endl;
+        write << root->getItem().LnchSite << endl;
+        write << root->getItem().LnchVehicle << endl;
+        write << root->getItem().NORADNum << endl;
+        saveFiles(root->right, filename);
+    }
+    write.close();
+}
+
 void printAll(BinNode *root){
     if (root != NULL){
         printAll(root->left);
-        cout << root->getItem().getSatName() << endl; //change this action to dereferencing to make the delete all trees thing
+        cout << root->getItem().getSatName() << endl;
         printAll(root->right);
     }
-
 }
 
-bool searchName(BinNode *root, string search){
-
-
+bool findName(BinNode *root, string search){
     if (root == NULL){
         cout << "Tree is Empty" << endl;
         return false;
-
     }
-    else if (root->getItem().getSatName().find(search)) {
-        Satellite foundSat = root->getItem();
-        cout << "Name: " << foundSat.getSatName() << endl;
-        cout << "NORAD Tracking Number: " << foundSat.getNoradNum() << endl;
+    else if (root->getItem().getSatName() == search) {
+        Satellite Sat = root->getItem();
+        cout << "**Name: " << Sat.SatName << endl;
+        cout << "**NORAD Tracking No.: " << Sat.getNoradNum() << endl;
+        cout << "**Sat. Type: " << Sat.SatType << endl;
+        cout << "**Country of Ownership: " << Sat.Country << endl;
+        cout << "**Operator Name: " << Sat.OpName << endl;
+        cout << "**Purpose: " << Sat.Task << endl;
+        cout << "**Detailed Purpose: " << Sat.LongTask << endl;
+        cout << "**Expected Lifetime: " << Sat.ExpLife << endl;
+        cout << "**Orbit Type: " << Sat.OrbitType << endl;
+        cout << "**Apogee/Perigee/Period: "<< Sat.apogee<< "/"<< Sat.perigee<< "/"<< Sat.period<< endl;
+        cout << "**Launched On: " << Sat.LnchDate << endl;
+        cout << "**Launched From: " << Sat.LnchSite << endl;
+        cout << "**Launch Vehicle: " << Sat.LnchVehicle << endl;
         return true;
     }
     else if (search < root->getItem().getSatName())
-        return searchName(root->left, search );
+        return findName(root->left, search );
     else{
-        return searchName(root->right,search);
+        return findName(root->right, search );
     }
-
-
 }
 
 int main() {
     bool quitProgram = false;
 
+    ofstream fileClear;
     BinNode *root;
     BinNode *rootDeorbit;
     Satellite satInput;
@@ -131,7 +176,7 @@ int main() {
 
     while (quitProgram == false){
         cout << endl;
-        cout << "Please input a command - (L)aunch, (d)eorbit, (F)ind, (A)ll, (R)ead, (S)ave, (Q)uit :";
+        cout << "Please input a command - (L)aunch, (D)eorbit, (F)ind, (A)ll, (R)ead, (S)ave, (Q)uit :";
 
         char inputCMD;
         cin >> inputCMD;
@@ -140,19 +185,19 @@ int main() {
         switch (input) {
             case 'L':
                 cout << "Input Satellite Name: ";
-                cin >>  SatName;
+                cin >> noskipws >> SatName;
                 cout << "Input Country of Ownership: ";
-                cin >>  Country;
+                cin >> noskipws >> Country;
                 cout << "Input Name of Operator: ";
-                cin >>  OpName;
+                cin >> noskipws >> OpName;
                 cout << "Input Satellite Type: ";
-                cin >>  SatType;
+                cin >> noskipws >>  SatType;
                 cout << "Input Purpose of Operation: ";
-                cin >>  Task;
+                cin >> noskipws >>  Task;
                 cout << "Input Detailed Purpose, or n/a if no detail given: ";
-                cin >>  LongTask;
+                cin >> noskipws >> LongTask;
                 cout << "Input Orbit Type: ";
-                cin >>  OrbitType;
+                cin >> noskipws >> OrbitType;
                 cout << "Input Apogee: ";
                 cin >>  apogee;
                 cout << "Input Perigee: ";
@@ -162,11 +207,11 @@ int main() {
                 cout << "Input Date of Launch: ";
                 cin >>  LnchDate;
                 cout << "Input Expected Lifetime: ";
-                cin >>  ExpLife;
+                cin >> noskipws >>  ExpLife;
                 cout << "Input Launch Site Location: ";
-                cin >>  LnchSite;
+                cin >> noskipws >> LnchSite;
                 cout << "Input Launch Vehicle: ";
-                cin >>  LnchVehicle;
+                cin >> noskipws >> LnchVehicle;
                 cout << "Input NORAD Designation Number: ";
                 cin >>  NORADNum;
 
@@ -189,45 +234,62 @@ int main() {
                 Insert(root, satInput);
                 cout << "Satellite added to launch list!" << endl;
                 break;
+
             case 'D':
                 cout << "Deorbit function ran";
+                //------------------------------------------------------------
+                //------------------------------------------------------------
                 break;
+
             case 'F':
                 bool searchTest;
-                cout << "Find function ran" << endl;
+
                 cout << "Please enter name of satellite to search: ";
-                cin >> searchTerm;
+                cin >> noskipws >> searchTerm;
+
                 cout << "Checking Orbit..." << endl;
-                searchTest = searchName(root, searchTerm);
+                searchTest = findName(root, searchTerm);
                 if (!searchTest) cout << "Term not Found" << endl;
+                cout << endl;
+
                 cout << "Checking Decommissions...";
-                searchTest = searchName(rootDeorbit, "Decommissioned Satellites");
+                searchTest = findName(rootDeorbit, searchTerm);
                 if (!searchTest) cout << "Term not Found" << endl;
+
                 break;
+
             case 'A':
-                cout << "All Function ran" << endl;
+                cout << "---------ORBITING---------" << endl;
                 printAll(root);
+                cout << "------DECOMMSSIONED-------" << endl;
                 printAll(rootDeorbit);
                 break;
+
             case 'R':
-                cout << "Read function ran" << endl;
-                //First, dereference anything pointed to "root" on trees to remove them
-
-                //defererence()
-
-                //should return pointer to root node of read trees, orbit and deorbit
-                //^
-                //|
+                deleteTree(root);
+                deleteTree(rootDeorbit);
                 root = readFiles("orbit.txt");
                 rootDeorbit = readFiles("deorbit.txt");
+                cout << "Files read!" << endl;
                 break;
+
             case 'S':
-                cout << "Save function ran";
+
+                fileClear.open("orbit.txt", ios::out| ios::trunc);
+                fileClear.close();
+                fileClear.open("deorbit.txt", ios::out| ios::trunc);
+                fileClear.close();
+
+                saveFiles(root, "orbit.txt");
+                saveFiles(rootDeorbit, "deorbit.txt");
+                cout << "Saved to file!" << endl;
                 break;
+
             case 'Q':
                 cout << "Quitting Program";
                 quitProgram = true;
                 break;
+
             default:
                 cout << "No program run, please check input.";
 
