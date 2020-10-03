@@ -22,8 +22,82 @@ void Insert(BinNode *&rt, Satellite sat){
 
 };
 
-void Deorbit(BinNode *root, string delSearch){
+void findNode(BinNode *&cursor, string search, BinNode *&precursor){
+    while (cursor != NULL && cursor->getItem().SatName != search){
+        precursor = cursor;
+        if (search > cursor->getItem().SatName){
+            cursor = cursor->right;
+        }else{
+            cursor = cursor ->left;
+        }
+    }
+}
 
+BinNode* findLowest(BinNode *cursor){
+    while(cursor->getLeft() != NULL){
+        cursor = cursor->left;
+    }
+    return cursor;
+}
+
+void printAll(BinNode *root){
+    if (root != NULL){
+        printAll(root->left);
+        cout << root->getItem().getSatName() << endl;
+        printAll(root->right);
+    }
+}
+
+Satellite Deorbit(BinNode *root, string delSearch){
+    BinNode* precursor = NULL;
+    BinNode* cursor = root;
+    findNode(cursor, delSearch, precursor);
+    Satellite returnedSat = cursor->getItem();
+    Satellite nullSat;
+    nullSat.setNoradNum(1010101010);
+
+    if (cursor == NULL){
+        cout<< "Satellite not found. Please try a different search term." << endl;
+        return nullSat;
+    }else if (cursor->left == NULL && cursor->right == NULL){
+        if (cursor != root){
+            if (precursor->right == cursor){
+                precursor->right = NULL;
+            }else
+                precursor->left = NULL;
+        }else
+            root = NULL;
+
+        free(cursor);
+
+
+    }else if (cursor->left != NULL && cursor->right != NULL){
+        BinNode* replace = findLowest(cursor->right);
+        Satellite rpSat = replace->getItem();
+
+        Deorbit(root, replace->getItem().SatName);
+
+        cursor->setItem(rpSat);
+    }
+    else{
+
+        BinNode * child;
+        if (cursor->left == NULL){
+            child = cursor->right;
+        }else
+            child = cursor->left;
+
+        if (cursor == root){
+            root = child;
+        }else if (cursor == precursor->left){
+            precursor->left = child;
+        }else{
+            precursor->right = child;
+        }
+        free(cursor);
+    }
+
+    return returnedSat;
 }
 
 void deleteTree(BinNode *root){
@@ -50,7 +124,7 @@ BinNode* readFiles(string filename){
     //first, orbit file
     readFile.open(filename);
     if (readFile.is_open()){
-        cout << "File 'Orbit.txt' opened";
+        cout << "File opened" <<endl;
         while (readFile.good()){
             getline(readFile, SatName);
             if (readFile.bad() || readFile.eof()){
@@ -101,6 +175,7 @@ void saveFiles(BinNode *root, string filename){
     write.open(filename, ios::out | ios::app);
     if (root != NULL){
         saveFiles(root->left, filename);
+        saveFiles(root->right, filename);
         write << root->getItem().SatName << endl;
         write << root->getItem().Country << endl;
         write << root->getItem().OpName << endl;
@@ -116,22 +191,13 @@ void saveFiles(BinNode *root, string filename){
         write << root->getItem().LnchSite << endl;
         write << root->getItem().LnchVehicle << endl;
         write << root->getItem().NORADNum << endl;
-        saveFiles(root->right, filename);
+
     }
     write.close();
 }
 
-void printAll(BinNode *root){
-    if (root != NULL){
-        printAll(root->left);
-        cout << root->getItem().getSatName() << endl;
-        printAll(root->right);
-    }
-}
-
 bool findName(BinNode *root, string search){
     if (root == NULL){
-        cout << "Tree is Empty" << endl;
         return false;
     }
     else if (root->getItem().getSatName() == search) {
@@ -184,35 +250,39 @@ int main() {
 
         switch (input) {
             case 'L':
+                cin.clear();
+                while (cin.get()!= '\n'){continue;}
                 cout << "Input Satellite Name: ";
-                cin >> noskipws >> SatName;
-                cout << "Input Country of Ownership: ";
-                cin >> noskipws >> Country;
-                cout << "Input Name of Operator: ";
-                cin >> noskipws >> OpName;
-                cout << "Input Satellite Type: ";
-                cin >> noskipws >>  SatType;
-                cout << "Input Purpose of Operation: ";
-                cin >> noskipws >>  Task;
-                cout << "Input Detailed Purpose, or n/a if no detail given: ";
-                cin >> noskipws >> LongTask;
-                cout << "Input Orbit Type: ";
-                cin >> noskipws >> OrbitType;
-                cout << "Input Apogee: ";
+                getline(cin, SatName);
+                cout << '\n' << "Input Country of Ownership: ";
+                getline(cin, Country);
+                cout << '\n' << "Input Name of Operator: ";
+                getline(cin, OpName);
+                cout << '\n' << "Input Satellite Type: ";
+                getline(cin, SatType);
+                cout << '\n' << "Input Purpose of Operation: ";
+                getline(cin, Task);
+                cout << '\n' << "Input Detailed Purpose, or n/a if no detail given: ";
+                getline(cin, LongTask);
+                cout << '\n' << "Input Orbit Type: ";
+                getline(cin, OrbitType);
+                cout << '\n' << "Input Apogee: ";
                 cin >>  apogee;
-                cout << "Input Perigee: ";
+                cout << '\n' << "Input Perigee: ";
                 cin >>  perigee;
-                cout << "Input Period: ";
+                cout << '\n' << "Input Period: ";
                 cin >>  period;
-                cout << "Input Date of Launch: ";
-                cin >>  LnchDate;
-                cout << "Input Expected Lifetime: ";
-                cin >> noskipws >>  ExpLife;
-                cout << "Input Launch Site Location: ";
-                cin >> noskipws >> LnchSite;
-                cout << "Input Launch Vehicle: ";
-                cin >> noskipws >> LnchVehicle;
-                cout << "Input NORAD Designation Number: ";
+                cin.clear();
+                while (cin.get()!= '\n'){continue;}
+                cout << '\n' << "Input Date of Launch: ";
+                getline(cin, LnchDate);
+                cout << '\n' << "Input Expected Lifetime: ";
+                getline(cin, ExpLife);
+                cout << '\n' << "Input Launch Site Location: ";
+                getline(cin, LnchSite);
+                cout << '\n' << "Input Launch Vehicle: ";
+                getline(cin, LnchVehicle);
+                cout << '\n' << "Input NORAD Designation Number: ";
                 cin >>  NORADNum;
 
                 satInput.setNoradNum(NORADNum);
@@ -236,16 +306,30 @@ int main() {
                 break;
 
             case 'D':
-                cout << "Deorbit function ran";
-                //------------------------------------------------------------
-                //------------------------------------------------------------
+                cout << "Enter satellite for removal: ";
+                cin.clear();
+                while (cin.get()!= '\n'){continue;}
+                getline(cin, searchTerm);
+                satInput = Deorbit(root, searchTerm);
+                if (satInput.getNoradNum() == 1010101010){
+                    cout << "Satellite not found. Aborting..." <<endl;
+                    break;
+                }else {
+                    Insert(rootDeorbit, satInput);
+                    cout << '\n' << "Satellite deorbited." << endl;
+                }
+
                 break;
 
             case 'F':
                 bool searchTest;
 
-                cout << "Please enter name of satellite to search: ";
-                cin >> noskipws >> searchTerm;
+                cout << "\n" << "Please enter name of satellite to search: ";
+                cin.clear();
+                while (cin.get()!= '\n'){
+                    continue;
+                }
+                getline(cin, searchTerm);
 
                 cout << "Checking Orbit..." << endl;
                 searchTest = findName(root, searchTerm);
