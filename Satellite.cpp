@@ -1,18 +1,15 @@
-//
-// Created by Chris on 9/26/2020.
-//
+/*
+ * EECS 2150 Project 0 - Binary Search Tree of Satellites
+ * Author: Christopher Pucko
+ *
+ * Class file for Satellite object. Declares empty constructor for Satellite objects.
+ */
 
 #include "Satellite.h"
 
 //Constructor
 
-Satellite::Satellite() {
-    NORADNum = NULL;
-
-}
-Satellite::Satellite(string SatName) {
-        setSatName(SatName);
-}
+Satellite::Satellite() {}
 
 
 

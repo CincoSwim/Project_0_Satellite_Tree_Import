@@ -1,6 +1,9 @@
-//
-// Created by Chris on 9/30/2020.
-//
+/*
+ * EECS 2150 Project 0 - Binary Search Tree of Satellites
+ * Author: Christopher Pucko
+ *
+ * Class file for BinNode Object class. Defines actions of the getters/setters declared in the header file.
+ */
 
 #include "BinNode.h";
 

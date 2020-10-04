@@ -1,6 +1,11 @@
-//
-// Created by Chris on 9/30/2020.
-//
+/*
+ * EECS 2150 Project 0 - Binary Search Tree of Satellites
+ * Author: Christopher Pucko
+ *
+ * Header for "BinNode" or Binary Node Object class. Declares a BinNode as containing a Satellite object, and two p
+ * pointers to other BinNodes. Also declares a constructor that sets left and right pointers equal to NULL, and
+ * getters/setters for BinNode variables.
+ */
 #include "Satellite.h"
 #ifndef PROJECT_0_SATELLITE_TREE_IMPORT_BINNODE_H
 #define PROJECT_0_SATELLITE_TREE_IMPORT_BINNODE_H
